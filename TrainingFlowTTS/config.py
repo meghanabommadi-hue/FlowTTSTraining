@@ -29,4 +29,4 @@ MAX_SEQ_LENGTH = 100 * 50   # ~30 seconds audio
 DTYPE          = torch.float32
 MIN_AUDIO_SAMPLES = 8000
 
-ENGLISH_RATIO  = 25 / 75    # 25% English, 75% Kannada
+ENGLISH_RATIO  = 40 / 60    # 40% English, 60% Kannada
