@@ -1,5 +1,8 @@
 .env
 *.log
+*.lock
 __pycache__/
 *.pyc
 audio/outputs/
+unsloth_compiled_cache/
+wandb/

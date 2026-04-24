@@ -38,6 +38,14 @@ LANG_DEFAULTS = {
             "telugu": "నమస్కారం! నేను బజాజ్ ఫైనాన్స్ నుండి మాట్లాడుతున్నాను.",
         },
     },
+    "malayalam": {
+        "model":      "Shubhangi7/mira-english-1-epoch",
+        "sample_wav": config.SAMPLE_WAV,
+        "infer_texts": {
+            "malayalam": "നമസ്കാരം! ഞാൻ ബജാജ് ഫിനാൻസിൽ നിന്ന് സംസാരിക്കുന്നു.",
+            "mixed":     "നമസ്കാരം! ഞാൻ big basket-ൽ നിന്ന് vaani ആണ് സംസാരിക്കുന്നത്.",
+        },
+    },
 }
 
 
@@ -73,17 +81,17 @@ def main():
     from codec_utils import process_wavs
     from functools import partial
 
-    kannada_dataset = load_dataset(
+    lang_dataset = load_dataset(
         "parquet",
-        data_files={"train": config.KANNADA_SNAPSHOT},
+        data_files={"train": config.LANG_SNAPSHOT[args.lang]},
         split="train",
         verification_mode="no_checks",
     )
-    kannada_dataset = kannada_dataset.cast_column("audio", Audio(sampling_rate=16_000, decode=False))
-    kannada_dataset = kannada_dataset.shuffle(seed=42).select(range(args.num_samples))
+    lang_dataset = lang_dataset.cast_column("audio", Audio(sampling_rate=16_000, decode=False))
+    lang_dataset = lang_dataset.shuffle(seed=42).select(range(args.num_samples))
 
     tts_codec = build_codec()
-    dataset = kannada_dataset.map(
+    dataset = lang_dataset.map(
         partial(process_wavs, tts_codec=tts_codec),
         remove_columns=["audio"],
         with_indices=True,

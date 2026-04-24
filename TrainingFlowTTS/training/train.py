@@ -42,12 +42,22 @@ LANG_DEFAULTS = {
             "telugu": "నమస్కారం! నేను బజాజ్ ఫైనాన్స్ నుండి మాట్లాడుతున్నాను.",
         },
     },
+    "malayalam": {
+        "model":      "Shubhangi7/mira-english-1-epoch",
+        "hub_id":     "MeghanaKap/FlowTTSMalayalam",
+        "sample_wav": config.SAMPLE_WAV,
+        "infer_texts": {
+            "malayalam": "നമസ്കാരം! ഞാൻ ബജാജ് ഫിനാൻസിൽ നിന്ന് സംസാരിക്കുന്നു.",
+            "mixed":     "നമസ്കാരം! ഞാൻ big basket-ൽ നിന്ന് vaani ആണ് സംസാരിക്കുന്നത്.",
+        },
+    },
 }
+
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--lang", default="kannada", choices=list(LANG_DEFAULTS),
-                        help="Language to train (default: kannada)")
+                        help="Language to train (default: kannada; options: kannada, telugu, malayalam)")
     parser.add_argument("--model", default=None, help="Override base model HF id or local path")
     parser.add_argument("--checkpoint_dir", default=None, help="Override checkpoint directory")
     parser.add_argument("--num_samples", type=int, default=None,
@@ -60,7 +70,7 @@ def main():
     model_id      = args.model or lang_cfg["model"]
     hub_model_id  = args.hub_model_id or lang_cfg["hub_id"]
     checkpoint_dir = args.checkpoint_dir or os.path.join(
-        config.BASE_DATA_PA, f"outputs-{args.lang}-latest"
+        config.get_lang_base_path(args.lang), f"outputs-{args.lang}-latest"
     )
 
     os.makedirs(checkpoint_dir, exist_ok=True)
@@ -78,7 +88,7 @@ def main():
     )
 
     # dataset
-    dataset = load_or_build_dataset(num_samples=args.num_samples)
+    dataset = load_or_build_dataset(num_samples=args.num_samples, lang=args.lang)
 
     # training
     wandb.init(project="huggingface", name=f"flowtts-{args.lang}-{os.path.basename(checkpoint_dir)}")
